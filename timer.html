@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            margin-top: 50px;
+            font-size: 2.5em;
+        }
+        .input-container {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0;
+        }
+        input {
+            margin: 0 5px;
+            padding: 10px;
+            background-color: #1e1e1e;
+            color: #ffffff;
+            border: 1px solid #555555;
+            border-radius: 5px;
+            width: 70px; /* Bredere invoervelden */
+            -moz-appearance: none; /* Verberg de standaard pijltjes voor nummers */
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            background-color: #333333;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #555555;
+        }
+        #timer-display {
+            font-size: 2em;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Timer</h1>
+    <div class="input-container">
+        <input type="number" id="hours" placeholder="Uren" min="0">
+        <input type="number" id="minutes" placeholder="Minuten" min="0">
+        <input type="number" id="seconds" placeholder="Seconden" min="0">
+    </div>
+    <button id="start-button" onclick="startTimer()">Start Timer</button>
+    <button id="pause-button" onclick="togglePause()">Pauze</button>
+    <button id="reset-button" onclick="resetTimer()">Reset</button>
+    <p id="timer-display">00:00:00</p>
+
+    <script>
+        let countdown;
+        let totalSeconds;
+        let isPaused = false;
+        let originalSeconds;
+
+        function startTimer() {
+            const hours = parseInt(document.getElementById('hours').value) || 0;
+            const minutes = parseInt(document.getElementById('minutes').value) || 0;
+            const seconds = parseInt(document.getElementById('seconds').value) || 0;
+
+            originalSeconds = hours * 3600 + minutes * 60 + seconds;
+            totalSeconds = originalSeconds;
+
+            if (countdown) clearInterval(countdown);
+            countdown = setInterval(updateTimer, 1000);
+            document.getElementById('start-button').disabled = true;
+        }
+
+        function updateTimer() {
+            if (!isPaused) {
+                const display = document.getElementById('timer-display');
+                const minutes = Math.floor(totalSeconds / 60);
+                const remainingSeconds = totalSeconds % 60;
+
+                display.innerText = `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+                totalSeconds--;
+
+                if (totalSeconds < 0) {
+                    clearInterval(countdown);
+                    display.innerText = "Klaar!";
+                }
+            }
+        }
+
+        function togglePause() {
+            isPaused = !isPaused;
+            const pauseButton = document.getElementById('pause-button');
+            pauseButton.innerText = isPaused ? 'Doorgaan' : 'Pauze';
+        }
+
+        function resetTimer() {
+            clearInterval(countdown);
+            document.getElementById('timer-display').innerText = "00:00:00";
+            document.getElementById('hours').value = '';
+            document.getElementById('minutes').value = '';
+            document.getElementById('seconds').value = '';
+            totalSeconds = 0;
+            isPaused = false;
+            document.getElementById('pause-button').innerText = 'Pauze';
+            document.getElementById('start-button').disabled = false;
+        }
+    </script>
+</body>
+</html>
